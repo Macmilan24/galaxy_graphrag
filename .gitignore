@@ -1,14 +1,33 @@
-# --- Python ---
-.venv/
+# Environment
+.env
+.venv
+venv/
+env/
+
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
 
-# --- Environment ---
-.env
+# Data
+data/raw/
+data/processed/
+data/embeddings/
 
-# --- Data ---
-data/*.json
+# Logs
+*.log
+logs/
 
-# --- IDE/Editor ---
-.idea/
+# IDE
 .vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
