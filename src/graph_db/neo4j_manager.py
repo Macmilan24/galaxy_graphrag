@@ -30,3 +30,33 @@ class Neo4jManager:
         with self._driver.session() as session:
             result = session.run(query, parameters)
             return [record for record in result]
+
+    def create_constraints(self, constraints):
+        """
+        Apply a list of Cypher constraints to the database.
+        Example constraint: "CREATE CONSTRAINT FOR (t:Tool) REQUIRE t.id IS UNIQUE"
+        """
+        assert self._driver is not None, "Driver not initialized"
+        with self._driver.session() as session:
+            for constraint in constraints:
+                try:
+                    session.run(constraint)
+                    print(f"Applied constraint: {constraint}")
+                except Exception as e:
+                    # Neo4j raises an error if constraint already exists, which is fine to ignore or log
+                    print(f"Note: Constraint might already exist or failed: {e}")
+
+    def execute_batch(self, query, data, batch_size=1000):
+        """
+        Execute a query in batches.
+        The query should expect a parameter named 'batch'.
+        Example: "UNWIND $batch AS row CREATE (n:Node {id: row.id})"
+        """
+        assert self._driver is not None, "Driver not initialized"
+        with self._driver.session() as session:
+            total = len(data)
+            print(f"Starting batch execution for {total} records...")
+            for i in range(0, total, batch_size):
+                batch = data[i : i + batch_size]
+                session.run(query, {"batch": batch})
+                print(f"Processed batch {i // batch_size + 1}/{(total + batch_size - 1) // batch_size}")

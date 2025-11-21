@@ -1,32 +1,19 @@
+
 import logging
 import sys
-from config.settings import settings
 
-def setup_logger(name: str = "galaxy_graphrag") -> logging.Logger:
-    """Setup and configure logger"""
-    
+def get_logger(name):
+    """
+    Configures and returns a standard logger.
+    """
     logger = logging.getLogger(name)
-    
-    if logger.hasHandlers():
-        return logger
+    if not logger.handlers:
+        logger.setLevel(logging.INFO)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         
-    logger.setLevel(getattr(logging, settings.LOG_LEVEL))
-    
-    
-    formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S'
-    )
-    
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setFormatter(formatter)
-    logger.addHandler(console_handler)
-    
-    file_handler = logging.FileHandler('galaxy_graphrag.log')
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
-    
+        # StreamHandler to output logs to the console
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        
     return logger
-
-# Create default logger
-logger = setup_logger()

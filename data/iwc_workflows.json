@@ -1,0 +1,342 @@
+[
+  {
+    "id": "iwc_vgp-assembly-v2_assembly-hifi-hic-phasing-vgp4",
+    "name": "Genome Assembly from Hifi reads with HiC phasing - VGP4",
+    "number_of_steps": 75
+  },
+  {
+    "id": "iwc_vgp-assembly-v2_assembly-hifi-trio-phasing-vgp5",
+    "name": "Genome Assembly with Pacbio Hifi reads and Trio data for phasing - VGP5",
+    "number_of_steps": 64
+  },
+  {
+    "id": "iwc_vgp-assembly-v2_assembly-hifi-only-vgp3",
+    "name": "Genome Assembly from Hifi reads - VGP3",
+    "number_of_steps": 57
+  },
+  {
+    "id": "iwc_vgp-assembly-v2_assembly-decontamination-vgp9",
+    "name": "Assembly decontamination VGP9",
+    "number_of_steps": 19
+  },
+  {
+    "id": "iwc_vgp-assembly-v2_mitogenome-assembly-vgp0",
+    "name": "Mitogenome Assembly VGP0",
+    "number_of_steps": 10
+  },
+  {
+    "id": "iwc_vgp-assembly-v2_plot-nx-size",
+    "name": "Generate Nx and Size plots for multiple assemblies",
+    "number_of_steps": 15
+  },
+  {
+    "id": "iwc_vgp-assembly-v2_purge-duplicate-contigs-vgp6",
+    "name": "Purge duplicate contigs from a diploid assembly VGP6",
+    "number_of_steps": 61
+  },
+  {
+    "id": "iwc_vgp-assembly-v2_purge-duplicates-one-haplotype-vgp6b",
+    "name": "Purging duplicates in one haplotype VGP6b",
+    "number_of_steps": 52
+  },
+  {
+    "id": "iwc_vgp-assembly-v2_scaffolding-bionano-vgp7",
+    "name": "Scaffolding-BioNano-VGP7",
+    "number_of_steps": 17
+  },
+  {
+    "id": "iwc_vgp-assembly-v2_scaffolding-hic-vgp8",
+    "name": "Scaffolding with Hi-C data VGP8",
+    "number_of_steps": 78
+  },
+  {
+    "id": "iwc_vgp-assembly-v2_hi-c-contact-map-for-assembly-manual-curation",
+    "name": "PretextMap Generation from 1 or 2 haplotypes",
+    "number_of_steps": 45
+  },
+  {
+    "id": "iwc_vgp-assembly-v2_kmer-profiling-hifi-vgp1",
+    "name": "K-mer profiling and reads statistics VGP1",
+    "number_of_steps": 22
+  },
+  {
+    "id": "iwc_vgp-assembly-v2_kmer-profiling-hifi-trio-vgp2",
+    "name": "kmer-profiling-hifi-trio-VGP2",
+    "number_of_steps": 16
+  },
+  {
+    "id": "iwc_amplicon_dada2",
+    "name": "dada2 amplicon analysis pipeline - for paired end data",
+    "number_of_steps": 19
+  },
+  {
+    "id": "iwc_bacterial_genomics_amr_gene_detection",
+    "name": "amr_gene_detection",
+    "number_of_steps": 11
+  },
+  {
+    "id": "iwc_bacterial_genomics_bacterial-quality-and-contamination-control-post-assembly",
+    "name": "Post-Assembly Quality Control and Contamination Check for Bacterial Genomes",
+    "number_of_steps": 21
+  },
+  {
+    "id": "iwc_bacterial_genomics_bacterial_genome_annotation",
+    "name": "bacterial_genome_annotation",
+    "number_of_steps": 10
+  },
+  {
+    "id": "iwc_computational-chemistry_fragment-based-docking-scoring",
+    "name": "Fragment-based virtual screening using rDock for docking and SuCOS for pose scoring",
+    "number_of_steps": 18
+  },
+  {
+    "id": "iwc_computational-chemistry_gromacs-dctmd",
+    "name": "dcTMD calculations with GROMACS",
+    "number_of_steps": 36
+  },
+  {
+    "id": "iwc_computational-chemistry_gromacs-mmgbsa",
+    "name": "MMGBSA calculations with GROMACS",
+    "number_of_steps": 28
+  },
+  {
+    "id": "iwc_computational-chemistry_protein-ligand-complex-parameterization",
+    "name": "Create GRO and TOP complex files",
+    "number_of_steps": 14
+  },
+  {
+    "id": "iwc_data-fetching_parallel-accession-download",
+    "name": "Parallel Accession Download",
+    "number_of_steps": 5
+  },
+  {
+    "id": "iwc_data-fetching_sra-manifest-to-concatenated-fastqs",
+    "name": "sra_manifest_to_concatenated_fastqs_parallel",
+    "number_of_steps": 16
+  },
+  {
+    "id": "iwc_epigenetics_atacseq",
+    "name": "ATAC-seq Analysis: Chromatin Accessibility Profiling",
+    "number_of_steps": 31
+  },
+  {
+    "id": "iwc_epigenetics_average-bigwig-between-replicates",
+    "name": "BigWig Replicates Averaging Workflow",
+    "number_of_steps": 4
+  },
+  {
+    "id": "iwc_epigenetics_chipseq-pe",
+    "name": "ChIP-seq Analysis: Paired-End Read Processing",
+    "number_of_steps": 12
+  },
+  {
+    "id": "iwc_epigenetics_chipseq-sr",
+    "name": "ChIP-seq Analysis: Single-End Read Processing",
+    "number_of_steps": 13
+  },
+  {
+    "id": "iwc_epigenetics_consensus-peaks",
+    "name": "Consensus Peak Calling for ATAC-seq and CUT&RUN Replicates",
+    "number_of_steps": 28
+  },
+  {
+    "id": "iwc_epigenetics_cutandrun",
+    "name": "CUT&RUN/CUT&TAG Analysis: Protein-DNA Interaction Mapping",
+    "number_of_steps": 15
+  },
+  {
+    "id": "iwc_epigenetics_hic-hicup-cooler",
+    "name": "Capture Hi-C Processing: FASTQ to Balanced Cool Files",
+    "number_of_steps": 17
+  },
+  {
+    "id": "iwc_genome-assembly_assembly-with-flye",
+    "name": "Genome assembly with Flye",
+    "number_of_steps": 5
+  },
+  {
+    "id": "iwc_genome-assembly_bacterial-genome-assembly",
+    "name": "Bacterial Genome Assembly using Shovill",
+    "number_of_steps": 7
+  },
+  {
+    "id": "iwc_genome-assembly_polish-with-long-reads",
+    "name": "Assembly polishing with long reads",
+    "number_of_steps": 11
+  },
+  {
+    "id": "iwc_genome-assembly_quality-and-contamination-control-raw-reads",
+    "name": "Raw Read Quality and Contamination Control For Genome Assembly",
+    "number_of_steps": 12
+  },
+  {
+    "id": "iwc_genome_annotation_annotation-helixer",
+    "name": "Genome annotation with Helixer",
+    "number_of_steps": 10
+  },
+  {
+    "id": "iwc_genome_annotation_annotation-maker",
+    "name": "Genome annotation with Maker",
+    "number_of_steps": 14
+  },
+  {
+    "id": "iwc_genome_annotation_lncrnas-annotation",
+    "name": "lncRNAs annotation workflow",
+    "number_of_steps": 9
+  },
+  {
+    "id": "iwc_imaging_fluorescence-nuclei-segmentation-and-counting",
+    "name": "Segmentation and counting of cell nuclei in fluorescence microscopy images",
+    "number_of_steps": 8
+  },
+  {
+    "id": "iwc_metabolomics_gcms-metams",
+    "name": "Mass spectrometry: GCMS with metaMS",
+    "number_of_steps": 9
+  },
+  {
+    "id": "iwc_metabolomics_lcms-preprocessing",
+    "name": "Mass spectrometry: LC-MS preprocessing with XCMS",
+    "number_of_steps": 14
+  },
+  {
+    "id": "iwc_metabolomics_mfassignr",
+    "name": "Molecular formula assignment and recalibration with MFAssignR package.",
+    "number_of_steps": 10
+  },
+  {
+    "id": "iwc_metabolomics_qcxms-sdf",
+    "name": "QCxMS Spectra Prediction from SDF",
+    "number_of_steps": 5
+  },
+  {
+    "id": "iwc_microbiome_mags-building",
+    "name": "Metagenome-Assembled Genomes (MAGs) generation",
+    "number_of_steps": 56
+  },
+  {
+    "id": "iwc_microbiome_metagenomic-genes-catalogue",
+    "name": "Metagenomic Genes Catalogue Analysis",
+    "number_of_steps": 30
+  },
+  {
+    "id": "iwc_proteomics_openms-metaprosip",
+    "name": "MetaProSIP OpenMS 2.8",
+    "number_of_steps": 14
+  },
+  {
+    "id": "iwc_sars-cov-2-variant-calling_sars-cov-2-consensus-from-variation",
+    "name": "COVID-19: consensus construction",
+    "number_of_steps": 23
+  },
+  {
+    "id": "iwc_sars-cov-2-variant-calling_sars-cov-2-ont-artic-variant-calling",
+    "name": "COVID-19: variation analysis of ARTIC ONT data",
+    "number_of_steps": 27
+  },
+  {
+    "id": "iwc_sars-cov-2-variant-calling_sars-cov-2-pe-illumina-artic-ivar-analysis",
+    "name": "SARS-CoV-2 Illumina Amplicon pipeline - iVar based",
+    "number_of_steps": 21
+  },
+  {
+    "id": "iwc_sars-cov-2-variant-calling_sars-cov-2-pe-illumina-artic-variant-calling",
+    "name": "COVID-19: variation analysis on ARTIC PE data",
+    "number_of_steps": 33
+  },
+  {
+    "id": "iwc_sars-cov-2-variant-calling_sars-cov-2-pe-illumina-wgs-variant-calling",
+    "name": "COVID-19: variation analysis on WGS PE data",
+    "number_of_steps": 13
+  },
+  {
+    "id": "iwc_sars-cov-2-variant-calling_sars-cov-2-se-illumina-wgs-variant-calling",
+    "name": "COVID-19: variation analysis on WGS SE data",
+    "number_of_steps": 11
+  },
+  {
+    "id": "iwc_sars-cov-2-variant-calling_sars-cov-2-variation-reporting",
+    "name": "COVID-19: variation analysis reporting",
+    "number_of_steps": 36
+  },
+  {
+    "id": "iwc_scrnaseq_baredsc",
+    "name": "Single-Cell Mixture Analysis: baredSC 1D Log-Normalized Models",
+    "number_of_steps": 7
+  },
+  {
+    "id": "iwc_scrnaseq_fastq-to-matrix-10x",
+    "name": "Single-Cell RNA-seq Preprocessing: 10X Genomics CellPlex Multiplexed Samples",
+    "number_of_steps": 14
+  },
+  {
+    "id": "iwc_scrnaseq_pseudobulk-worflow-decoupler-edger",
+    "name": "Single-Cell Pseudobulk Differential Expression Analysis with edgeR",
+    "number_of_steps": 21
+  },
+  {
+    "id": "iwc_scrnaseq_scanpy-clustering",
+    "name": "Single-Cell RNA-seq Analysis: Scanpy Preprocessing and Clustering",
+    "number_of_steps": 68
+  },
+  {
+    "id": "iwc_scrnaseq_velocyto",
+    "name": "RNA Velocity Analysis: Velocyto for 10X Data with Filtered Barcodes",
+    "number_of_steps": 4
+  },
+  {
+    "id": "iwc_transcriptomics_brew3r",
+    "name": "BREW3R",
+    "number_of_steps": 10
+  },
+  {
+    "id": "iwc_transcriptomics_goseq",
+    "name": "Gene Ontology and KEGG Pathway Enrichment Analysis",
+    "number_of_steps": 10
+  },
+  {
+    "id": "iwc_transcriptomics_rnaseq-de",
+    "name": "RNA-Seq Differential Expression Analysis with Visualization",
+    "number_of_steps": 25
+  },
+  {
+    "id": "iwc_transcriptomics_rnaseq-pe",
+    "name": "RNA-Seq Analysis: Paired-End Read Processing and Quantification",
+    "number_of_steps": 27
+  },
+  {
+    "id": "iwc_transcriptomics_rnaseq-sr",
+    "name": "RNA-Seq Analysis: Single-End Read Processing and Quantification",
+    "number_of_steps": 25
+  },
+  {
+    "id": "iwc_variant-calling_generic-variant-calling-wgs-pe",
+    "name": "Generic variation analysis on WGS PE data",
+    "number_of_steps": 15
+  },
+  {
+    "id": "iwc_variant-calling_haploid-variant-calling-wgs-pe",
+    "name": "Paired end variant calling in haploid system",
+    "number_of_steps": 16
+  },
+  {
+    "id": "iwc_variant-calling_variation-reporting",
+    "name": "Generic variation analysis reporting",
+    "number_of_steps": 35
+  },
+  {
+    "id": "iwc_virology_generic-non-segmented-viral-variant-calling",
+    "name": "Variant calling and consensus construction from paired end short read data of non-segmented viral genomes",
+    "number_of_steps": 29
+  },
+  {
+    "id": "iwc_virology_influenza-isolates-consensus-and-subtyping",
+    "name": "Influenza A isolate subtyping and consensus sequence generation",
+    "number_of_steps": 70
+  },
+  {
+    "id": "iwc_virology_pox-virus-amplicon",
+    "name": "Pox Virus Illumina Amplicon Workflow from half-genomes",
+    "number_of_steps": 47
+  }
+]
