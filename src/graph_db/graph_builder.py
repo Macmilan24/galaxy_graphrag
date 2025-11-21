@@ -1,12 +1,15 @@
 import json
 from src.graph_db.neo4j_manager import Neo4jManager
+from src.utils.embeddings import EmbeddingService
 from src.utils.logger import get_logger
+from tqdm import tqdm
 
 logger = get_logger("graph_builder")
 
 class GraphBuilder:
     def __init__(self):
         self.neo4j = Neo4jManager()
+        self.embedder = EmbeddingService()
 
     def clear_database(self):
         """Deletes all nodes and relationships."""
@@ -24,6 +27,34 @@ class GraphBuilder:
             "CREATE CONSTRAINT FOR (c:Category) REQUIRE c.name IS UNIQUE",
         ]
         self.neo4j.create_constraints(constraints)
+        
+        # Create Vector Index for Tools
+        try:
+            self.neo4j.execute_query("""
+            CREATE VECTOR INDEX tool_embeddings IF NOT EXISTS
+            FOR (t:Tool)
+            ON (t.embedding)
+            OPTIONS {indexConfig: {
+             `vector.dimensions`: 384,
+             `vector.similarity_function`: 'cosine'
+            }}
+            """)
+            logger.info("Created vector index for Tools.")
+
+            # Create Vector Index for Workflows
+            self.neo4j.execute_query("DROP INDEX workflow_embeddings IF EXISTS")
+            self.neo4j.execute_query("""
+            CREATE VECTOR INDEX workflow_embeddings IF NOT EXISTS
+            FOR (w:Workflow)
+            ON (w.embedding)
+            OPTIONS {indexConfig: {
+             `vector.dimensions`: 384,
+             `vector.similarity_function`: 'cosine'
+            }}
+            """)
+            logger.info("Created vector index for Workflows.")
+        except Exception as e:
+            logger.warning(f"Could not create vector index (might be already existing or version mismatch): {e}")
 
     def load_tools(self, tools_file):
         """Loads tools from JSON and creates nodes/relationships."""
@@ -31,18 +62,25 @@ class GraphBuilder:
         with open(tools_file, "r", encoding="utf-8") as f:
             tools = json.load(f)
 
-        # 1. Create Tools
+        # Generate Embeddings
+        logger.info("Generating embeddings for tools...")
+        for tool in tqdm(tools, desc="Embedding Tools"):
+            text_to_embed = f"{tool.get('name', '')} {tool.get('description', '')} {tool.get('help', '')[:500]}"
+            tool['embedding'] = self.embedder.generate_embedding(text_to_embed)
+
+        # Create Tools
         query_tool = """
         UNWIND $batch AS row
         MERGE (t:Tool {id: row.tool_id})
         SET t.name = row.name,
             t.description = row.description,
             t.version = row.version,
-            t.help_text = row.help
+            t.help_text = row.help,
+            t.embedding = row.embedding
         """
         self.neo4j.execute_batch(query_tool, tools)
 
-        # 2. Create Categories and Relationships
+        # Create Categories and Relationships
         query_category = """
         UNWIND $batch AS row
         MATCH (t:Tool {id: row.tool_id})
@@ -52,7 +90,7 @@ class GraphBuilder:
         """
         self.neo4j.execute_batch(query_category, tools)
 
-        # 3. Create FileFormats and Relationships (Input/Output)
+        # Create FileFormats and Relationships (Input/Output)
         query_formats = """
         UNWIND $batch AS row
         MATCH (t:Tool {id: row.tool_id})
@@ -79,16 +117,23 @@ class GraphBuilder:
         with open(steps_file, "r", encoding="utf-8") as f:
             steps = json.load(f)
 
-        # 1. Create Workflows
+        # Generate Embeddings for Workflows
+        logger.info("Generating embeddings for workflows...")
+        for wf in tqdm(workflows, desc="Embedding Workflows"):
+            text_to_embed = f"{wf.get('name', '')}"
+            wf['embedding'] = self.embedder.generate_embedding(text_to_embed)
+
+        # Create Workflows
         query_workflow = """
         UNWIND $batch AS row
         MERGE (w:Workflow {id: row.id})
         SET w.name = row.name,
-            w.num_steps = row.number_of_steps
+            w.num_steps = row.number_of_steps,
+            w.embedding = row.embedding
         """
         self.neo4j.execute_batch(query_workflow, workflows)
 
-        # 2. Create WorkflowSteps
+        # Create WorkflowSteps
         query_steps = """
         UNWIND $batch AS row
         MERGE (ws:WorkflowStep {step_id: row.step_id})
@@ -105,11 +150,7 @@ class GraphBuilder:
         """
         self.neo4j.execute_batch(query_steps, steps)
         
-        # 3. Link Steps (NEXT_STEP) - Simplified based on step number
-        # This is a bit complex in batch, so we might do it per workflow or assume step_number order
-        # For now, let's skip explicit NEXT_STEP unless we have connection data, 
-        # or we can run a post-processing query to link steps by number.
-        
+        # Link Steps (NEXT_STEP)
         query_link_steps = """
         MATCH (w:Workflow)-[:HAS_STEP]->(ws1:WorkflowStep)
         MATCH (w)-[:HAS_STEP]->(ws2:WorkflowStep)

@@ -43,7 +43,6 @@ class Neo4jManager:
                     session.run(constraint)
                     print(f"Applied constraint: {constraint}")
                 except Exception as e:
-                    # Neo4j raises an error if constraint already exists, which is fine to ignore or log
                     print(f"Note: Constraint might already exist or failed: {e}")
 
     def execute_batch(self, query, data, batch_size=1000):

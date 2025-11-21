@@ -17,10 +17,8 @@ from src.utils.logger import get_logger
 
 logger = get_logger("galaxy_data_extractor")
 
-# Fix headers for GitHub API usage
 GITHUB_HEADERS = {"Authorization": f"token {GITHUB_TOKEN}"} if GITHUB_TOKEN else {}
 
-# Galaxy config (already imported)
 GALAXY_URL = GALAXY_URL
 GALAXY_API_KEY = GALAXY_API_KEY
 
@@ -94,10 +92,6 @@ WORKFLOW_STEP_NODE_SCHEMA = {
     },
 }
 
-# -------------------------
-# 2. HELPER FUNCTIONS
-# -------------------------
-
 
 def clean_help_text(text: str) -> str:
     """Removes HTML, markdown, and artifacts from help text."""
@@ -117,7 +111,7 @@ def normalize_tool_id(tool_id: str) -> str:
     return "/".join(parts[:-1])
 
 
-# ---- NEW: extract input/output formats ----
+# extract input/output formats 
 def extract_formats(root: ET.Element) -> tuple[list, list]:
     """Extract ONLY input formats + output formats."""
     input_formats = []
@@ -365,10 +359,6 @@ def validate_data(data: list[dict]) -> bool:
         logger.info(f"Validation FAILED: {e.message}")
         return False
 
-
-# -------------------------
-# 3. MAIN PIPELINE
-# -------------------------
 
 
 def main():
