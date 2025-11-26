@@ -16,7 +16,7 @@ class LeidenDetector:
     def run_leiden(self, resolution=1.0):
         # Runs Leiden algorithm and updates Neo4j with community IDs
         
-        # 1. Build Weighted Graph
+        # Build Weighted Graph
         logger.info("Building weighted graph...")
         nx_graph = self.projector.build_weighted_graph()
         
@@ -24,7 +24,7 @@ class LeidenDetector:
             logger.warning("Graph is empty.")
             return
 
-        # 2. Convert to iGraph (required by leidenalg)
+        # Convert to iGraph (required by leidenalg)
         logger.info("Converting to iGraph...")
         ig_graph = ig.Graph.from_networkx(nx_graph)
         
@@ -32,7 +32,7 @@ class LeidenDetector:
         if "weight" not in ig_graph.edge_attributes():
             ig_graph.es["weight"] = [1.0] * ig_graph.ecount()
 
-        # 3. Run Leiden Algorithm
+        # Run Leiden Algorithm
         logger.info(f"Running Leiden algorithm (resolution={resolution})...")
         partition = leidenalg.find_partition(
             ig_graph, 
@@ -43,7 +43,7 @@ class LeidenDetector:
         
         logger.info(f"Detected {len(partition)} communities.")
 
-        # 4. Write Results to Neo4j
+        # Write Results to Neo4j
         logger.info("Writing communities to Neo4j...")
         
         updates = []

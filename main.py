@@ -1,58 +1,114 @@
-# main.py
-import json
-from config import settings
+import argparse
+import sys
+from src.graph_db.graph_builder import GraphBuilder
+from src.community_detection.leiden import LeidenDetector
+from src.community_detection.summarizer import CommunitySummarizer
+from src.retrieval.search import GlobalSearch, LocalSearch, HybridSearch
 from src.utils.logger import get_logger
-from src.data_extraction.galaxy_extractor import GalaxyExtractor
 
-logger = get_logger(__name__)
+logger = get_logger("main")
 
-def run_data_extraction():
+def build_pipeline():
     """
-    Runs the Galaxy extractor for both tools and workflows.
+    Runs the complete data ingestion and graph construction pipeline.
+    1. Build Graph (Nodes & Edges) + Generate Embeddings
+    2. Detect Communities (Leiden)
+    3. Summarize Communities (LLM)
     """
-    logger.info("Initializing Galaxy Extractor...")
-    if not settings.GALAXY_URL:
-        logger.error("GALAXY_URL is not set in the .env file. Cannot proceed.")
+    print("\n" + "="*50)
+    print("Starting Galaxy GraphRAG Build Pipeline")
+    print("="*50)
+
+    # 1. Build Graph & Embeddings
+    print("\n[Step 1/3] Building Graph and Generating Embeddings...")
+    builder = GraphBuilder()
+    try:
+        builder.build_full_graph()
+        print("Graph construction complete.")
+    except Exception as e:
+        logger.error(f"Graph build failed: {e}")
         return
+    finally:
+        builder.close()
 
-    extractor = GalaxyExtractor(
-        galaxy_url=settings.GALAXY_URL,
-        galaxy_api_key=settings.GALAXY_API_KEY
-    )
+    # 2. Detect Communities
+    print("\n[Step 2/3] Detecting Communities (Leiden)...")
+    detector = LeidenDetector()
+    try:
+        detector.run_leiden()
+        print("Community detection complete.")
+    except Exception as e:
+        logger.error(f"Community detection failed: {e}")
+        return
+    finally:
+        detector.close()
+
+    # 3. Summarize Communities
+    print("\n[Step 3/3] Summarizing Communities (LLM)...")
+    summarizer = CommunitySummarizer()
+    try:
+        summarizer.run_summarization()
+        print("Community summarization complete.")
+    except Exception as e:
+        logger.error(f"Summarization failed: {e}")
+        return
+    finally:
+        summarizer.close()
+
+    print("\n" + "="*50)
+    print("Pipeline Completed Successfully!")
+    print("="*50)
+
+def run_query(query, mode="auto"):
+    """
+    Executes a search query against the built graph.
+    """
+    print(f"\nQuery: {query}")
+    print("-" * 30)
+
+    if mode == "global":
+        searcher = GlobalSearch()
+        result = searcher.search(query)
+        print(f"Global Search Result:\n{result}")
     
-
-    tools = extractor.extract_tool()
-    if tools:
-        logger.info(f"Successfully extracted {len(tools)} tools.")
-        print("\n--- Sample of Extracted Tools ---")
-        for tool in tools[:3]:
-            tool_dict = tool.__dict__
-            tool_dict['help_text'] = (tool_dict.get('help_text') or '')[:150] + "..."
-            print(json.dumps(tool_dict, indent=2))
-        
-        with open("data/tools.json", "w") as f:
-            json.dump([t.__dict__ for t in tools], f, indent=4)
-        logger.info("Saved tool data to data/tools.json")
-    else:
-        logger.warning("No tools were extracted.")
+    elif mode == "local":
+        searcher = LocalSearch()
+        results = searcher.search(query)
+        for i, res in enumerate(results):
+            print(f"\nResult {i+1}: {res['tool']['name']} (Score: {res['tool']['score']:.4f})")
+            print(f"Description: {res['tool']['description'][:150]}...")
+            
+    elif mode == "hybrid":
     
+        searcher = HybridSearch()
+        results = searcher.search(query) # No filter for now in simple CLI
+        for i, res in enumerate(results):
+            print(f"\nResult {i+1}: {res['name']} (Score: {res['score']:.4f})")
+            
+    else: 
+        if len(query.split()) > 5:
+            print("[Auto-Mode] Selected Global Search")
+            run_query(query, mode="global")
+        else:
+            print("[Auto-Mode] Selected Local Search")
+            run_query(query, mode="local")
 
-    workflows = extractor.extract_workflows()
-    if workflows:
-        logger.info(f"Successfully extracted {len(workflows)} workflows.")
-        print("\n--- Sample of Extracted Workflows ---")
-        for workflow in workflows[:3]:
-            print(json.dumps(workflow.__dict__, indent=2, default=lambda o: o.__dict__))
+def main():
+    parser = argparse.ArgumentParser(description="Galaxy GraphRAG CLI")
+    
+    # Mode selection
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--build", action="store_true", help="Run the full graph build and indexing pipeline")
+    group.add_argument("--query", type=str, help="Run a search query")
+    
+    parser.add_argument("--mode", type=str, choices=["global", "local", "hybrid", "auto"], default="auto", help="Search mode (default: auto)")
 
-        with open("data/workflows.json", "w") as f:
-            json.dump([w.__dict__ for w in workflows], f, indent=4, default=lambda o: o.__dict__)
-        logger.info("Saved workflow data to data/workflows.json")
-    else:
-        logger.warning("No workflows were extracted. Ensure GALAXY_API_KEY is correct.")
+    args = parser.parse_args()
+
+    if args.build:
+        build_pipeline()
+    elif args.query:
+        run_query(args.query, args.mode)
 
 if __name__ == "__main__":
-    logger.info("--- Starting Galaxy GraphRAG Pipeline: Data Extraction Phase ---")
-    
-    run_data_extraction()
-    
-    logger.info("--- Data Extraction Phase Finished ---")
+    main()
