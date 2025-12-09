@@ -45,28 +45,32 @@ class GraphProjector:
         results = self.neo4j.execute_query(query)
         return results
 
-    def build_weighted_graph(self):
+    def build_weighted_graph(self, filter_tool_ids=None):
         """Builds a NetworkX graph with weighted edges."""
         G = nx.Graph()
         
-        # Nodes & Semantic Similarity
+        # Semantic Similarity
         embeddings = self.fetch_tool_embeddings()
         
-        # Filter embeddings to ensure consistent dimension (384)
+        # Filter for valid 384-dim embeddings AND filter_tool_ids if provided
         valid_tool_ids = []
         valid_embeddings = []
         expected_dim = 384
         
         for tid, emb in embeddings.items():
+            # Apply Topic Filter
+            if filter_tool_ids is not None and tid not in filter_tool_ids:
+                continue
+                
             if len(emb) == expected_dim:
                 valid_tool_ids.append(tid)
                 valid_embeddings.append(emb)
             else:
-                logger.warning(f"Skipping tool {tid}: Embedding dimension {len(emb)} != {expected_dim}")
+                logger.warning(f"Skipping tool {tid}: Dimension mismatch")
         
         tool_ids = valid_tool_ids
         if not tool_ids:
-            logger.error("No valid embeddings found with dimension 384.")
+            logger.error("No valid embeddings found.")
             return G
 
         matrix = np.array(valid_embeddings)
@@ -90,19 +94,25 @@ class GraphProjector:
         cooccurrences = self.fetch_workflow_cooccurrences()
         for row in cooccurrences:
             u, v, w = row['source'], row['target'], row['weight']
-            if G.has_edge(u, v):
-                G[u][v]['weight'] += w * 1.0 
-            else:
-                G.add_edge(u, v, weight=w * 1.0, type='workflow')
+            
+            # Only add if nodes exist (might be filtered out)
+            if u in tool_ids and v in tool_ids:
+                if G.has_edge(u, v):
+                    G[u][v]['weight'] += w * 1.0 
+                else:
+                    G.add_edge(u, v, weight=w * 1.0, type='workflow')
 
         # I/O Connections
         io_conns = self.fetch_io_connections()
         for row in io_conns:
             u, v, w = row['source'], row['target'], row['weight']
-            if G.has_edge(u, v):
-                G[u][v]['weight'] += w * 0.5 
-            else:
-                G.add_edge(u, v, weight=w * 0.5, type='io')
+            
+            # Only add if nodes exist
+            if u in tool_ids and v in tool_ids:
+                if G.has_edge(u, v):
+                    G[u][v]['weight'] += w * 0.5 
+                else:
+                    G.add_edge(u, v, weight=w * 0.5, type='io')
                 
         logger.info(f"Built graph with {G.number_of_nodes()} nodes and {G.number_of_edges()} edges.")
         return G
